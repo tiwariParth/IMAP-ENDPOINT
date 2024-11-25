@@ -4,19 +4,25 @@ import dotenv from "dotenv";
 import { Readable } from "stream";
 
 dotenv.config();
+console.log(
+  process.env.EMAIL_USER,
+  process.env.EMAIL_PASS,
+  process.env.EMAIL_HOST,
+  process.env.EMAIL_PORT
+);
 
-type imapConfig = {
-  user: string;
-  password: string;
-  host: string;
-  port: number;
-  tls: boolean;
-};
+if (
+  !process.env.EMAIL_USER ||
+  !process.env.EMAIL_PASS ||
+  !process.env.EMAIL_HOST
+) {
+  throw new Error("Missing required environment variables for IMAP connection");
+}
 
 const imap: Imap = new Imap({
-  user: process.env.EMAIL_USER || "",
-  password: process.env.EMAIL_PASS || "",
-  host: process.env.EMAIL_HOST || "",
+  user: process.env.EMAIL_USER,
+  password: process.env.EMAIL_PASS,
+  host: process.env.EMAIL_HOST,
   port: parseInt(process.env.EMAIL_PORT || "993", 10),
   tls: true,
 });

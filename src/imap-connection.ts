@@ -47,13 +47,23 @@ imap.once("ready", () => {
         msg.on("body", (stream, info) => {
           simpleParser(stream as Readable, (err, parsed: ParsedMail) => {
             if (err) throw err;
-            console.log(`Email Subject: ${parsed.subject}`);
+            const isNewsletter = parsed.headers.has("list-unsubscribe");
+            if (isNewsletter) {
+              console.log(`Newsletter Subject: ${parsed.subject}`);
+            } else {
+              console.log(`Regular Email Subject: ${parsed.subject}`);
+            }
           });
         });
       });
 
       fetch.once("error", (err) => {
         console.error("Fetch Error:", err);
+      });
+
+      fetch.once("end", () => {
+        console.log("Done fetching all messages!");
+        imap.end();
       });
     });
   });
